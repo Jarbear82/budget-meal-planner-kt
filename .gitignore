@@ -9,3 +9,26 @@ captures
 !**/module.xcodeproj/project.xcworkspace/
 **/xcshareddata/WorkspaceSettings.xcsettings
 xcuserdata
+
+# IntelliJ IDEA / Android Studio
+
+.idea
+
+local.properties
+
+# Gradle / Amper / Build outputs
+.gradle
+**/build/
+!src/**/build/
+
+.externalNativeBuild
+.cxx
+
+# Xcode / iOS
+
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+
