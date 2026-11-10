@@ -1,0 +1,552 @@
+:toc: left
+:sectnums: all
+:source-highlighter: coderay
+
+[[requirements]]
+
+
+== Meal Planning
+
+.**Scheduled Meals (SCM)**
+[%collapsible]
+====
+
+// tag::scm-1[]
+A scheduled meal shall have a date, time, meal type, category, number of servings, and optional notes.
+// end::scm-1[]
+
+// tag::scm-2[]
+The system shall allow the meal type to be either “restaurant” or “pre-planned”.
+// end::scm-2[]
+
+// tag::scm-3[]
+The system shall allow the category to be Breakfast, Lunch, Dinner, Dessert, Snack, or Other.
+// end::scm-3[]
+
+// tag::scm-4[]
+The system shall allow the user to create, view, edit, and delete scheduled meals.
+// end::scm-4[]
+
+// tag::scm-5[]
+The system shall not force a scheduled meal’s category to match the category of its linked pre-planned meal.
+// end::scm-5[]
+
+// tag::scm-6[]
+A scheduled meal of type restaurant shall support an optional manual cost entry.
+// end::scm-6[]
+
+// tag::scm-7[]
+When a scheduled meal is marked consumed, the system shall create a consumption event and apply the corresponding pantry stock changes.
+// end::scm-7[]
+
+// tag::scm-8[]
+The system shall support recurring scheduled meals (daily, weekly, or custom interval) with an optional end date or occurrence count.
+// end::scm-8[]
+
+// tag::scm-9[]
+The system shall provide day, week, and month calendar views of scheduled meals and shall allow rescheduling by changing date/time.
+// end::scm-9[]
+====
+
+.**Restaurants (RNT)**
+[%collapsible]
+====
+// tag::rnt-1[]
+The system shall allow the user to create, view, edit, and delete restaurants.
+// end::rnt-1[]
+
+// tag::rnt-2[]
+A restaurant shall have a unique name and may have optional address and notes.
+// end::rnt-2[]
+
+// tag::rnt-3[]
+The system shall allow a scheduled meal of type restaurant to reference a restaurant.
+// end::rnt-3[]
+====
+
+.**Pre-Planned Meals (PPM)**
+[%collapsible]
+====
+// tag::ppm-1[]
+The system shall allow the user to create, view, edit, and delete pre-planned meals.
+// end::ppm-1[]
+
+// tag::ppm-2[]
+A pre-planned meal shall consist of a name, a category, optional notes, and a list of ingredients with per-serving amounts.
+// end::ppm-2[]
+
+// tag::ppm-3[]
+Quantities required for a scheduled meal shall be obtained by multiplying each per-serving amount by the number of servings on the scheduled meal.
+// end::ppm-3[]
+
+// tag::ppm-4[]
+The system shall allow the user to add, remove, and change the per-serving amount of any ingredient on a pre-planned meal.
+// end::ppm-4[]
+
+// tag::ppm-5[]
+When a required ingredient does not exist, the system shall first present existing recipes that yield that ingredient; if none are suitable, the system shall allow the user to create a new recipe.
+// end::ppm-5[]
+====
+
+.**Ingredient (ING)**
+[%collapsible]
+====
+// tag::ing-1[]
+The system shall allow the user to create, view, edit, and delete ingredients.
+// end::ing-1[]
+
+// tag::ing-2[]
+An ingredient shall have a unique name, a make/buy preference (Make, Buy, or Either), optional preferred store, optional notes, and optional substitute ingredient list.
+// end::ing-2[]
+
+// tag::ing-3[]
+The system shall allow an ingredient to be produced by zero or more recipes.
+// end::ing-3[]
+
+// tag::ing-4[]
+The system shall allow allergens and dietary flags to be associated with an ingredient.
+// end::ing-4[]
+
+// tag::ing-5[]
+When the make/buy preference is Make, the system shall prefer recipe-based fulfillment over purchasing when generating shopping lists or resolving missing ingredients.
+// end::ing-5[]
+
+// tag::ing-6[]
+The system shall allow the user to maintain a list of substitute ingredients for any ingredient.
+// end::ing-6[]
+
+// tag::ing-7[]
+An ingredient may represent a prepared or leftover meal (i.e., the output of a recipe or scheduled meal).
+// end::ing-7[]
+====
+
+.**Recipe (RCP)**
+[%collapsible]
+====
+// tag::rcp-1[]
+The system shall allow the user to create, view, edit, and delete recipes.
+// end::rcp-1[]
+
+// tag::rcp-2[]
+A recipe shall list input ingredients (with amounts) and an ordered list of instructions.
+// end::rcp-2[]
+
+// tag::rcp-3[]
+A recipe shall declare one or more yielded ingredient amounts.
+// end::rcp-3[]
+
+// tag::rcp-4[]
+The system shall allow a recipe to be scaled by the number of servings the user intends to make.
+// end::rcp-4[]
+
+// tag::rcp-5[]
+When a recipe is made, the user shall first choose the desired number of servings, then confirm the actual input amounts consumed and the actual leftover amounts.
+// end::rcp-5[]
+
+// tag::rcp-6[]
+Consumed amounts shall be recorded as a consumption event; only leftover amounts greater than zero shall be added to the pantry.
+// end::rcp-6[]
+
+// tag::rcp-7[]
+The system shall record each recipe-make event (timestamp, confirmed input amounts consumed, confirmed leftover amounts, scale factor, and optional notes).
+// end::rcp-7[]
+
+// tag::rcp-8[]
+A recipe may have optional description, preparation time, cook time, and notes.
+// end::rcp-8[]
+
+// tag::rcp-9[]
+If pantry stock is insufficient for the confirmed input amounts, the system shall decrement available stock to zero, record the shortfall, and notify the user.
+// end::rcp-9[]
+====
+
+.**Recipe Instruction (RCI)**
+[%collapsible]
+====
+// tag::rci-1[]
+A recipe shall have an ordered list of instructions.
+// end::rci-1[]
+
+// tag::rci-2[]
+Each instruction shall have a step number, instruction text, and may have an optional timer duration and optional media reference.
+// end::rci-2[]
+
+// tag::rci-3[]
+The system shall allow the user to add, edit, reorder, and delete instructions on a recipe.
+// end::rci-3[]
+====
+
+.**Pantry (PTY)**
+[%collapsible]
+====
+// tag::pty-1[]
+The system shall allow the user to add, view, edit, and remove pantry items.
+// end::pty-1[]
+
+// tag::pty-2[]
+A pantry item shall represent a specific amount of an ingredient and may include optional acquired date, expiry date, and notes.
+// end::pty-2[]
+
+// tag::pty-3[]
+The system shall change pantry quantities when a scheduled meal is consumed, when a recipe is made, when the user explicitly records consumption or waste, or when the user directly edits a pantry item.
+// end::pty-3[]
+
+// tag::pty-4[]
+The system shall allow the user to explicitly record consumption of an ingredient (amount and optional note) independent of a meal or recipe.
+// end::pty-4[]
+
+// tag::pty-5[]
+The system shall allow the user to explicitly record waste (expired or discarded) of an ingredient.
+// end::pty-5[]
+
+// tag::pty-6[]
+Direct edits to pantry quantity shall be allowed and shall not be classified as consumption or waste events.
+// end::pty-6[]
+
+// tag::pty-7[]
+The system shall flag pantry items that are expired or approaching expiry.
+// end::pty-7[]
+====
+
+.**Package (PKG)**
+[%collapsible]
+====
+// tag::pkg-1[]
+The system shall allow the user to create, view, edit, and delete packages.
+// end::pkg-1[]
+
+// tag::pkg-2[]
+A package shall specify a store, an amount of an ingredient, and a price.
+// end::pkg-2[]
+
+// tag::pkg-3[]
+Price and amount changes shall overwrite the existing package.
+// end::pkg-3[]
+
+// tag::pkg-4[]
+The system shall allow multiple packages from the same store for the same ingredient.
+// end::pkg-4[]
+
+// tag::pkg-5[]
+A package may include optional barcode and notes.
+// end::pkg-5[]
+====
+
+.**Store (STR)**
+[%collapsible]
+====
+// tag::str-1[]
+The system shall allow the user to create, view, edit, and delete stores.
+// end::str-1[]
+
+// tag::str-2[]
+A store shall have a unique name and may have optional address and notes.
+// end::str-2[]
+====
+
+.**Nutritional Information (NRI)**
+[%collapsible]
+====
+// tag::nri-1[]
+The system shall allow the user to edit the nutritional information of an ingredient.
+// end::nri-1[]
+
+// tag::nri-2[]
+Nutritional information shall always specify a serving size (amount + unit). All other fields are optional.
+// end::nri-2[]
+
+// tag::nri-3[]
+The system shall optionally allow calories, macro-nutrients, and micro-nutrients to be specified per serving.
+// end::nri-3[]
+
+// tag::nri-4[]
+The system shall derive nutritional totals for recipes, pre-planned meals, and scheduled meals by aggregating the nutritional information of their constituent ingredients (scaled by amounts and servings).
+// end::nri-4[]
+====
+
+.**Amount (AMT)**
+[%collapsible]
+====
+// tag::amt-1[]
+An amount shall always contain a quantity and a unit.
+// end::amt-1[]
+
+// tag::amt-2[]
+Quantity shall be a positive decimal number.
+// end::amt-2[]
+====
+
+.**Unit Conversion Ratio (UCR)**
+[%collapsible]
+====
+// tag::ucr-1[]
+A unit conversion ratio for an ingredient shall contain a mass amount, volume amount, and/or a count amount, with at least one amount specified.
+// end::ucr-1[]
+
+// tag::ucr-2[]
+The system shall use unit conversion ratios when normalizing amounts for cost calculation, shopping-list generation, recipe scaling, and pantry operations.
+// end::ucr-2[]
+
+// tag::ucr-3[]
+The system shall flag when operations and calculations are impossible because unit conversion ratios are underspecified.
+// end::ucr-3[]
+====
+
+.**Unit (UNT)**
+[%collapsible]
+====
+// tag::unt-1[]
+The system shall provide the unit types Mass, Volume, and Count.
+// end::unt-1[]
+
+// tag::unt-2[]
+The system shall provide Metric and U.S. Customary mass and volume units by default.
+// end::unt-2[]
+
+// tag::unt-3[]
+The system shall support standard conversions between units of the same type (e.g., g ↔ kg, ml ↔ L, cup ↔ tbsp).
+// end::unt-3[]
+
+// tag::unt-4[]
+The system shall support non-standard conversions between units via unit conversion ratios.
+// end::unt-4[]
+
+// tag::unt-5[]
+The system shall allow users to create, view, edit, or delete aliases for counts or count groups.
+// end::unt-5[]
+
+// tag::unt-6[]
+Each unit shall have a name, symbol, type, and measurement system.
+// end::unt-6[]
+====
+
+.**Allergen (ALG)**
+[%collapsible]
+====
+// tag::alg-1[]
+The system shall maintain a list of basic allergens and shall allow the user to add custom allergens.
+// end::alg-1[]
+
+// tag::alg-2[]
+Allergens are associated with ingredients; a recipe’s or pre-planned meal’s allergens are the aggregation of its ingredients’ allergens.
+// end::alg-2[]
+
+// tag::alg-3[]
+The system shall allow the user to add or remove allergens from an ingredient.
+// end::alg-3[]
+====
+
+.**Dietary Flag (DFL)**
+[%collapsible]
+====
+// tag::dfl-1[]
+The system shall maintain a list of basic dietary flags and shall allow the user to add custom dietary flags.
+// end::dfl-1[]
+
+// tag::dfl-2[]
+Dietary flags are associated with ingredients; a recipe’s or pre-planned meal’s dietary flags are the aggregation of its ingredients’ dietary flags.
+// end::dfl-2[]
+
+// tag::dfl-3[]
+The system shall allow the user to add or remove dietary flags from an ingredient.
+// end::dfl-3[]
+====
+
+.**Shopping (SNG)**
+[%collapsible]
+====
+// tag::sng-1[]
+The system shall automatically generate a list of needed ingredients based on future scheduled meals (scaled by servings and reduced by current pantry stock).
+// end::sng-1[]
+
+// tag::sng-2[]
+The system shall allow the user to manually add ingredients to the needed list.
+// end::sng-2[]
+
+// tag::sng-3[]
+The system shall not allow the user to manually remove ingredients that are derived from future scheduled meals; only manually added items may be removed.
+// end::sng-3[]
+
+// tag::sng-4[]
+The system shall automatically sort the needed list into per-store shopping lists based on either best package price (default) or the ingredient’s preferred store.
+// end::sng-4[]
+
+// tag::sng-5[]
+The system shall allow users to manually set which store an item will be purchased from.
+// end::sng-5[]
+
+// tag::sng-6[]
+The system shall allow users to manually set which package an item will be purchased as.
+// end::sng-6[]
+
+// tag::sng-7[]
+The system shall automatically compute a predicted subtotal per store shopping list based on packages from that store.
+// end::sng-7[]
+
+// tag::sng-8[]
+The system shall support a shopping session in which the user selects a store and can check off items from that store’s list.
+// end::sng-8[]
+
+// tag::sng-9[]
+During a shopping session the user shall still be able to manually add items.
+// end::sng-9[]
+
+// tag::sng-10[]
+When the user indicates shopping is complete, the system shall ask for the actual subtotal for that shopping trip.
+// end::sng-10[]
+
+// tag::sng-11[]
+If the actual subtotal does not match the predicted subtotal for the selected items, the system shall allow the user to adjust package prices or select different packages.
+// end::sng-11[]
+
+// tag::sng-12[]
+The system shall save a receipt for each completed shopping trip.
+// end::sng-12[]
+
+// tag::sng-13[]
+When generating the needed list, ingredients whose make/buy preference is Make shall be preferentially fulfilled via recipes when possible.
+// end::sng-13[]
+====
+
+.**Receipt (RCT)**
+[%collapsible]
+====
+// tag::rct-1[]
+A receipt shall record the store or restaurant, date, subtotal, total, and optionally the list of items purchased.
+// end::rct-1[]
+
+// tag::rct-2[]
+Receipt line items shall store the quantity, unit price (or line total), and description; they shall not retain a foreign key to a package.
+// end::rct-2[]
+
+// tag::rct-3[]
+The system shall allow users to create, view, edit, and delete receipts.
+// end::rct-3[]
+
+// tag::rct-4[]
+A receipt line may optionally reference an ingredient.
+// end::rct-4[]
+
+// tag::rct-5[]
+A receipt may include optional tax, tip, and notes.
+// end::rct-5[]
+====
+
+.**Analytics (ANL)**
+[%collapsible]
+====
+// tag::anl-1[]
+The system shall provide an analytics view based on receipts, recipes made, planned meals, consumed meals, and waste events.
+// end::anl-1[]
+
+// tag::anl-2[]
+The system shall allow users to view analytics for specified time periods.
+// end::anl-2[]
+
+// tag::anl-3[]
+The system shall allow users to create widgets to visualize different analytics.
+// end::anl-3[]
+
+// tag::anl-4[]
+The system shall provide tracking, comparison, and projected analytics.
+// end::anl-4[]
+
+// tag::anl-5[]
+The system shall support at least the following analytics: total spend, cost per meal/serving, ingredient usage frequency, pantry waste (expired or discarded), and recipe make frequency.
+// end::anl-5[]
+====
+
+.**Time Periods (TIP)**
+[%collapsible]
+====
+// tag::tip-1[]
+The system shall provide the time periods Day, Week, Month, Year, and Custom (user-specified).
+// end::tip-1[]
+
+// tag::tip-2[]
+The system shall allow users to save multiple custom time periods for reuse.
+// end::tip-2[]
+
+// tag::tip-3[]
+A custom time period shall have a name, start date, and end date.
+// end::tip-3[]
+====
+
+.**Consumption & Waste Events (CNS)**
+[%collapsible]
+====
+// tag::cns-1[]
+The system shall record a consumption event when a scheduled meal is marked consumed, when a recipe is made, or when the user explicitly records consumption of an ingredient.
+// end::cns-1[]
+
+// tag::cns-2[]
+The system shall record a waste event when the user explicitly records waste or when an expired pantry item is discarded.
+// end::cns-2[]
+
+// tag::cns-3[]
+Each consumption or waste event shall capture the timestamp, the amounts involved, and an optional note.
+// end::cns-3[]
+
+// tag::cns-4[]
+Consumption and waste events shall drive automatic pantry decrements (and pantry increments for recipe leftovers).
+// end::cns-4[]
+====
+
+.**Cost Calculation (CST)**
+[%collapsible]
+====
+// tag::cst-1[]
+The system shall derive cost per serving for an ingredient from its associated packages (using the preferred store if set, otherwise the lowest-priced package, normalized via unit conversion ratios and the ingredient’s serving size).
+// end::cst-1[]
+
+// tag::cst-2[]
+The system shall derive cost per serving for a pre-planned meal and for a pre-planned scheduled meal from its ingredients’ package data.
+// end::cst-2[]
+
+// tag::cst-3[]
+A scheduled meal of type restaurant shall use the manually entered cost when present; otherwise cost is treated as unknown.
+// end::cst-3[]
+====
+
+.**Search & Filtering (SRF)**
+[%collapsible]
+====
+// tag::srf-1[]
+The system shall allow the user to search and filter ingredients, recipes, pre-planned meals, scheduled meals, pantry items, packages, stores, restaurants, and receipts by name and other relevant attributes.
+// end::srf-1[]
+
+// tag::srf-2[]
+The system shall support filtering by category, allergen, dietary flag, make/buy preference, store, and date ranges where applicable.
+// end::srf-2[]
+====
+
+.**Notifications (NTF)**
+[%collapsible]
+====
+// tag::ntf-1[]
+The system shall notify the user when pantry stock is insufficient for a scheduled meal or recipe.
+// end::ntf-1[]
+
+// tag::ntf-2[]
+The system shall notify the user of pantry items that are expired or approaching expiry.
+// end::ntf-2[]
+
+// tag::ntf-3[]
+The system shall allow the user to configure optional reminders for upcoming scheduled meals.
+// end::ntf-3[]
+====
+
+.**User Preferences (PRF)**
+[%collapsible]
+====
+// tag::prf-1[]
+The system shall allow the user to set preferred units (Metric or U.S. Customary), currency, and default store.
+// end::prf-1[]
+
+// tag::prf-2[]
+The system shall allow the user to configure notification preferences.
+// end::prf-2[]
+= // tag::prf-3[]
+The system shall persist user preferences across sessions.
+// end::prf-3[]
+====

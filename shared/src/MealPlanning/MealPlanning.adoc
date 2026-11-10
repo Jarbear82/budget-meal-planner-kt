@@ -1,0 +1,32 @@
+:toc: left
+:sectnums: all
+:source-highlighter: coderay
+
+= Meal Planning
+
+== Pre-Planned Meals
+
+== Restaurants
+
+== Scheduled Meals
+
+include::../../../REQUIREMENTS.adoc[tag=scm-1]
+
+[, kotlin]
+----
+include::ScheduledMeal.kt[tag=scm-1]
+----
+
+include::../../../REQUIREMENTS.adoc[tag=scm-2]
+
+[, kotlin]
+----
+include::MealType.kt[tag=scm-2]
+----
+
+include::../../../REQUIREMENTS.adoc[tag=scm-3]
+
+[, kotlin]
+----
+include::../Shared/MealCategory.kt[tag=scm-3]
+----
